@@ -19,6 +19,8 @@ import answer.king.service.ItemService;
 @RequestMapping("/item")
 public class ItemController {
 
+	private static final String acceptableNameRegex = "^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$";
+
 	@Autowired
 	private ItemService itemService;
 
@@ -29,12 +31,33 @@ public class ItemController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<String> create(@RequestBody Item item) {
-		try {
-			item = itemService.save(item);
-			String itemJson = item.toJson();
-			return new ResponseEntity<>(itemJson, HttpStatus.OK);
-		} catch (JsonProcessingException ex) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		String valid = checkValidity(item);
+		if (!valid.equals("ok")) {
+			String error = "{ \"error\": \"" + valid + "\" }";
+			return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 		}
+
+		item = itemService.save(item);
+		String itemJson = "";
+		try {
+			itemJson = item.toJson();
+		} catch (JsonProcessingException ex) {
+			String error = "{ \"error\": \"Exception serialising item to JSON.\" }";
+			return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity<>(itemJson, HttpStatus.OK);
+	}
+
+	private String checkValidity(Item item) {
+		if (item.getPrice().signum() == -1) {
+			return "Price cannot be negative.";
+		}
+
+		if (!item.getName().matches(acceptableNameRegex)) {
+			return "Only letters, numbers and spaces are accepted in the item name.";
+		}
+
+		return ("ok");
 	}
 }

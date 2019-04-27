@@ -2,6 +2,8 @@ package answer.king.model;
 
 import java.math.BigDecimal;
 
+import lombok.Data;
+
 @Data
 public class Receipt {
 

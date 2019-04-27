@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.Data;
+
 @Entity
 @Table(name = "T_ORDER")
 @Data
