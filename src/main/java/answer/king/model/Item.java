@@ -15,8 +15,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.Data;
+
 @Entity
 @Table(name = "T_ITEM")
+@Data
 public class Item {
 
 	@Id
@@ -31,38 +34,6 @@ public class Item {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ORDER_ID")
 	private Order order;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public BigDecimal getPrice() {
-		return price;
-	}
-
-	public void setPrice(BigDecimal price) {
-		this.price = price;
-	}
-
-	public Order getOrder() {
-		return order;
-	}
-
-	public void setOrder(Order order) {
-		this.order = order;
-	}
 
 	public String toJson() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
