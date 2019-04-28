@@ -11,6 +11,8 @@ public class Receipt {
 
 	private Order order;
 
+	private BigDecimal change;
+
 	public BigDecimal getChange() {
 		BigDecimal totalOrderPrice = order.getItems()
 			.stream()

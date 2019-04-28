@@ -3,6 +3,7 @@ package answer.king.service;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,12 @@ public class OrderService {
 
 	public List<Order> getAll() {
 		return orderRepository.findAll();
+	}
+
+	public Order getOrder(Long id) {
+		Order order = orderRepository.findOne(id);
+		Hibernate.initialize(order.getItems());
+		return order;
 	}
 
 	public Order save(Order order) {

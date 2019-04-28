@@ -2,6 +2,7 @@ package answer.king.service;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,12 @@ public class ItemService {
 
 	public List<Item> getAll() {
 		return itemRepository.findAll();
+	}
+
+	public Item getItem(Long id) {
+		Item item = itemRepository.findOne(id);
+		Hibernate.initialize(item.getOrder());
+		return item;
 	}
 
 	public Item save(Item item) {
