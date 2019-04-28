@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 
 import lombok.Data;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Data
 public class Receipt {
 
@@ -13,6 +16,8 @@ public class Receipt {
 
 	private BigDecimal change;
 
+	private String text;
+
 	public BigDecimal getChange() {
 		BigDecimal totalOrderPrice = order.getItems()
 			.stream()
@@ -21,4 +26,9 @@ public class Receipt {
 
 		return payment.subtract(totalOrderPrice);
 	}
+
+	public String toJson() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(this);
+    }
 }

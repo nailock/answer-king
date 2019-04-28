@@ -51,9 +51,25 @@ public class OrderService {
 	public Receipt pay(Long id, BigDecimal payment) {
 		Order order = orderRepository.findOne(id);
 
+		BigDecimal totalOrderPrice = order.getItems()
+			.stream()
+			.map(Item::getPrice)
+			.reduce(BigDecimal.ZERO, BigDecimal::add);
+
 		Receipt receipt = new Receipt();
-		receipt.setPayment(payment);
 		receipt.setOrder(order);
+
+		if (payment.compareTo(totalOrderPrice) == -1) {
+			receipt.setPayment(BigDecimal.ZERO);
+			receipt.setChange(BigDecimal.ZERO);
+			receipt.setText("Insufficient funds.");
+		} else {
+			receipt.setPayment(payment);
+			receipt.setText("Approved.");
+			order.setPaid(true);
+			orderRepository.save(order);
+		}
+		
 		return receipt;
 	}
 }
