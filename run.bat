@@ -1,0 +1,1 @@
+java -jar target/answer-king-0.3.0-SNAPSHOT.war
