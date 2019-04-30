@@ -13,6 +13,7 @@ import answer.king.model.Order;
 import answer.king.model.Receipt;
 import answer.king.repo.ItemRepository;
 import answer.king.repo.OrderRepository;
+import answer.king.repo.ReceiptRepository;
 
 @Service
 @Transactional
@@ -23,6 +24,9 @@ public class OrderService {
 
 	@Autowired
 	private ItemRepository itemRepository;
+
+	@Autowired
+	private ReceiptRepository receiptRepository;
 
 	public List<Order> getAll() {
 		return orderRepository.findAll();
@@ -61,13 +65,13 @@ public class OrderService {
 
 		if (payment.compareTo(totalOrderPrice) == -1) {
 			receipt.setPayment(BigDecimal.ZERO);
-			receipt.setChange(BigDecimal.ZERO);
-			receipt.setText("Insufficient funds.");
+			receipt.setText("Insufficient funds");
 		} else {
 			receipt.setPayment(payment);
-			receipt.setText("Approved.");
+			receipt.setText("Approved");
 			order.setPaid(true);
 			orderRepository.save(order);
+			receiptRepository.save(receipt);
 		}
 		
 		return receipt;

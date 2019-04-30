@@ -74,4 +74,90 @@ public class ItemControllerTest extends GenericControllerTest {
         Assert.assertEquals(responseContent, "{ \"error\": \"Price cannot be negative.\" }");
     }
 
+    @Test
+    public void testUpdatePrice() throws Exception {
+        // Prerequisite - we have an item
+        Item testitem = new Item();
+        testitem.setId(1L);
+        testitem.setName("Test Item");
+        testitem.setPrice(new BigDecimal(10));
+
+        String itemJson = testitem.toJson();
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(uri)
+                              .contentType("application/json")
+                              .content(itemJson)).andReturn();
+
+        int status = result.getResponse().getStatus();
+        String responseContent = result.getResponse().getContentAsString();
+        Item returnedItem = mapFromJson(responseContent, Item.class);
+
+        Assert.assertEquals(200, status);
+        Assert.assertEquals(testitem.getId(), returnedItem.getId());
+        Assert.assertEquals(testitem.getName(), returnedItem.getName());
+        Assert.assertEquals(testitem.getPrice(), returnedItem.getPrice());
+
+        BigDecimal newPrice = new BigDecimal(20);
+
+        String updatePriceUri = uri + "/" + testitem.getId() + "/updatePrice/" + newPrice;
+        
+        MvcResult updateResult = mockMvc.perform(MockMvcRequestBuilders.put(updatePriceUri))
+                         .andReturn();
+
+        int updateStatus = updateResult.getResponse().getStatus();
+
+        Assert.assertEquals(200, updateStatus);
+
+        String fetchUri = uri + "/" + returnedItem.getId();
+
+        MvcResult fetchResult = mockMvc.perform(MockMvcRequestBuilders.get(fetchUri))
+                              .andReturn();
+
+        int fetchStatus = fetchResult.getResponse().getStatus();
+        String fetchResponseContent = fetchResult.getResponse().getContentAsString();
+        Item fetchedItem = mapFromJson(fetchResponseContent, Item.class);
+
+        Assert.assertEquals(200, fetchStatus);
+        Assert.assertEquals(testitem.getId(), fetchedItem.getId());
+        Assert.assertEquals(testitem.getName(), fetchedItem.getName());
+        Assert.assertEquals(0, newPrice.compareTo(fetchedItem.getPrice()));
+    }
+
+    @Test
+    public void testUpdatePrice_badPrice() throws Exception {
+        // Prerequisite - we have an item
+        Item testitem = new Item();
+        testitem.setId(1L);
+        testitem.setName("Test Item");
+        testitem.setPrice(new BigDecimal(10));
+
+        String itemJson = testitem.toJson();
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(uri)
+                              .contentType("application/json")
+                              .content(itemJson)).andReturn();
+
+        int status = result.getResponse().getStatus();
+        String responseContent = result.getResponse().getContentAsString();
+        Item returnedItem = mapFromJson(responseContent, Item.class);
+
+        Assert.assertEquals(200, status);
+        Assert.assertEquals(testitem.getId(), returnedItem.getId());
+        Assert.assertEquals(testitem.getName(), returnedItem.getName());
+        Assert.assertEquals(testitem.getPrice(), returnedItem.getPrice());
+
+        BigDecimal newPrice = new BigDecimal(-1);
+
+        String updatePriceUri = uri + "/" + testitem.getId() + "/updatePrice/" + newPrice;
+        
+        MvcResult updateResult = mockMvc.perform(MockMvcRequestBuilders.put(updatePriceUri))
+                         .andReturn();
+
+        int updateStatus = updateResult.getResponse().getStatus();
+        String updateResponseContent = updateResult.getResponse().getContentAsString();
+
+        Assert.assertEquals(400, updateStatus);
+        Assert.assertEquals(updateResponseContent, "{ \"error\": \"Price cannot be negative.\" }");
+    }
+
 }

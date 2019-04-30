@@ -1,5 +1,6 @@
 package answer.king.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.Hibernate;
@@ -25,6 +26,12 @@ public class ItemService {
 		Item item = itemRepository.findOne(id);
 		Hibernate.initialize(item.getOrder());
 		return item;
+	}
+
+	public Item updatePrice(Long id, BigDecimal newPrice) {
+		Item item = itemRepository.findOne(id);
+		item.setPrice(newPrice);
+		return itemRepository.save(item);
 	}
 
 	public Item save(Item item) {
