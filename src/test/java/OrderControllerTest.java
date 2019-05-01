@@ -11,11 +11,14 @@ import java.math.BigDecimal;
 
 public class OrderControllerTest extends GenericControllerTest {
 
+    // Test class for our order controller
+
     private final static String orderuri = "/order";
     private final static String itemuri = "/item";
 
     @Test
-    public void testOrderCreate() throws Exception {        
+    public void testOrderCreate() throws Exception {
+        // POST to create a new order        
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(orderuri))
                          .andReturn();
 
@@ -35,6 +38,7 @@ public class OrderControllerTest extends GenericControllerTest {
 
         String itemJson = testitem.toJson();
 
+        // POST our new item
         MvcResult itemresult = mockMvc.perform(MockMvcRequestBuilders.post(itemuri)
                               .contentType("application/json")
                               .content(itemJson)).andReturn();
@@ -49,6 +53,7 @@ public class OrderControllerTest extends GenericControllerTest {
         Assert.assertEquals(testitem.getPrice(), returnedItem.getPrice());
 
         // Prerequisite - we have an order
+        // POST to create a new order
         MvcResult orderresult = mockMvc.perform(MockMvcRequestBuilders.post(orderuri))
                          .andReturn();
 
@@ -61,6 +66,8 @@ public class OrderControllerTest extends GenericControllerTest {
         // Now we can add the item
         String adduri = orderuri + "/" + returnedOrder.getId() + "/addItem/" + returnedItem.getId()
                         + "/quantity/1";
+
+        // PUT our item and it's desired quantity onto our order
         MvcResult addresult = mockMvc.perform(MockMvcRequestBuilders.put(adduri))
                             .andReturn();
 
@@ -80,6 +87,7 @@ public class OrderControllerTest extends GenericControllerTest {
 
         String itemJson = testitem.toJson();
 
+        // POST our new item
         MvcResult itemresult = mockMvc.perform(MockMvcRequestBuilders.post(itemuri)
                               .contentType("application/json")
                               .content(itemJson)).andReturn();
@@ -94,6 +102,7 @@ public class OrderControllerTest extends GenericControllerTest {
         Assert.assertEquals(testitem.getPrice(), returnedItem.getPrice());
 
         // Prerequisite - we have an order
+        // POST to create a new order
         MvcResult orderresult = mockMvc.perform(MockMvcRequestBuilders.post(orderuri))
                          .andReturn();
 
@@ -106,6 +115,8 @@ public class OrderControllerTest extends GenericControllerTest {
         // Now we can add the item
         String adduri = orderuri + "/" + returnedOrder.getId() + "/addItem/" + returnedItem.getId()
                         + "/quantity/-1";
+
+        // PUT our item and it's desired quantity onto our order
         MvcResult addresult = mockMvc.perform(MockMvcRequestBuilders.put(adduri))
                             .andReturn();
 
@@ -127,6 +138,7 @@ public class OrderControllerTest extends GenericControllerTest {
 
         String itemJson = testitem.toJson();
 
+        // POST our new item
         MvcResult itemresult = mockMvc.perform(MockMvcRequestBuilders.post(itemuri)
                               .contentType("application/json")
                               .content(itemJson)).andReturn();
@@ -141,6 +153,7 @@ public class OrderControllerTest extends GenericControllerTest {
         Assert.assertEquals(testitem.getPrice(), returnedItem.getPrice());
 
         // Prerequisite - we have an order
+        // POST to create a new order
         MvcResult orderresult = mockMvc.perform(MockMvcRequestBuilders.post(orderuri))
                          .andReturn();
 
@@ -153,6 +166,8 @@ public class OrderControllerTest extends GenericControllerTest {
         // Prerequisite - the item's attached to the order
         String adduri = orderuri + "/" + returnedOrder.getId() + "/addItem/" + returnedItem.getId()
                         + "/quantity/1";
+
+        // PUT our item and it's desired quantity onto our order
         MvcResult addresult = mockMvc.perform(MockMvcRequestBuilders.put(adduri))
                             .andReturn();
 
@@ -164,6 +179,8 @@ public class OrderControllerTest extends GenericControllerTest {
         String payuri = orderuri + "/" + returnedOrder.getId() + "/pay";
         // We can overpay to test the change functionality
         String paymentAmount = "15";
+        
+        // PUT our payment for our order
         MvcResult paymentresult = mockMvc.perform(MockMvcRequestBuilders.put(payuri)
                                 .contentType("application/json")
                                 .content(paymentAmount))
@@ -195,6 +212,7 @@ public class OrderControllerTest extends GenericControllerTest {
 
         String itemJson = testitem.toJson();
 
+        // POST our new item
         MvcResult itemresult = mockMvc.perform(MockMvcRequestBuilders.post(itemuri)
                               .contentType("application/json")
                               .content(itemJson)).andReturn();
@@ -209,6 +227,7 @@ public class OrderControllerTest extends GenericControllerTest {
         Assert.assertEquals(testitem.getPrice(), returnedItem.getPrice());
 
         // Prerequisite - we have an order
+        // POST to create a new order
         MvcResult orderresult = mockMvc.perform(MockMvcRequestBuilders.post(orderuri))
                          .andReturn();
 
@@ -221,6 +240,8 @@ public class OrderControllerTest extends GenericControllerTest {
         // Prerequisite - the item's attached to the order
         String adduri = orderuri + "/" + returnedOrder.getId() + "/addItem/" + returnedItem.getId()
                         + "/quantity/1";
+
+        // PUT our item and it's desired quantity onto our order
         MvcResult addresult = mockMvc.perform(MockMvcRequestBuilders.put(adduri))
                             .andReturn();
 
@@ -232,6 +253,8 @@ public class OrderControllerTest extends GenericControllerTest {
         String payuri = orderuri + "/" + returnedOrder.getId() + "/pay";
 
         String paymentAmount = "5";
+
+        // PUT our payment for our order
         MvcResult paymentresult = mockMvc.perform(MockMvcRequestBuilders.put(payuri)
                                 .contentType("application/json")
                                 .content(paymentAmount))
@@ -263,6 +286,7 @@ public class OrderControllerTest extends GenericControllerTest {
 
         String itemJson = testitem.toJson();
 
+        // POST our new item
         MvcResult itemresult = mockMvc.perform(MockMvcRequestBuilders.post(itemuri)
                               .contentType("application/json")
                               .content(itemJson)).andReturn();
@@ -277,6 +301,7 @@ public class OrderControllerTest extends GenericControllerTest {
         Assert.assertEquals(testitem.getPrice(), returnedItem.getPrice());
 
         // Prerequisite - we have an order
+        // POST to create a new order
         MvcResult orderresult = mockMvc.perform(MockMvcRequestBuilders.post(orderuri))
                          .andReturn();
 
@@ -289,6 +314,8 @@ public class OrderControllerTest extends GenericControllerTest {
         // Prerequisite - the item's attached to the order
         String adduri = orderuri + "/" + returnedOrder.getId() + "/addItem/" + returnedItem.getId()
                         + "/quantity/1";
+
+        // PUT our item and it's desired quantity onto our order
         MvcResult addresult = mockMvc.perform(MockMvcRequestBuilders.put(adduri))
                             .andReturn();
 
@@ -300,6 +327,8 @@ public class OrderControllerTest extends GenericControllerTest {
         String payuri = orderuri + "/" + returnedOrder.getId() + "/pay";
 
         String paymentAmount = "-1";
+
+        // PUT our payment for our order
         MvcResult paymentresult = mockMvc.perform(MockMvcRequestBuilders.put(payuri)
                                 .contentType("application/json")
                                 .content(paymentAmount))

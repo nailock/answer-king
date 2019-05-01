@@ -16,19 +16,24 @@ import answer.king.repo.LineItemRepository;
 @Service
 @Transactional
 public class LineItemService {
+    // New service to manipulate LineItems
 
+    // Access to the repo
 	@Autowired
 	private LineItemRepository lineItemRepository;
 
+    // Fetch all the LineItems - maybe we don't need this
 	public List<LineItem> getAll() {
 		return lineItemRepository.findAll();
 	}
 
+    // Fetch a lineitem
 	public LineItem getItem(Long id) {
 		LineItem item = lineItemRepository.findOne(id);
 		return item;
 	}
 
+    // Persist a lineitem
 	public LineItem save(LineItem item) {
 		return lineItemRepository.save(item);
 	}

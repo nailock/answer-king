@@ -19,7 +19,7 @@ import lombok.Data;
 
 @Entity
 @Table(name = "T_LINEITEM")
-@Data
+@Data // Lombok can generate our getters and setters
 public class LineItem {
 
     @Id
@@ -32,11 +32,14 @@ public class LineItem {
 
     private Long itemId;
 
+    // If we have multiples of the same LineItem make sure we calculate the
+    // total price accordingly
     @JsonIgnore
     public BigDecimal getTotalPrice() {
         return currentPrice.multiply(new BigDecimal(quantity));
     }
 
+    // Serialisation function
 	public String toJson() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(this);

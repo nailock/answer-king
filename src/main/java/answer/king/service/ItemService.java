@@ -22,11 +22,13 @@ public class ItemService {
 		return itemRepository.findAll();
 	}
 
+	// Find a single item
 	public Item getItem(Long id) {
 		Item item = itemRepository.findOne(id);
 		return item;
 	}
 
+	// Update an item's price
 	public Item updatePrice(Long id, BigDecimal newPrice) {
 		Item item = itemRepository.findOne(id);
 		item.setPrice(newPrice);

@@ -26,7 +26,7 @@ import lombok.Data;
 
 @Entity
 @Table(name = "T_ORDER")
-@Data
+@Data // Lombok can generate our getters and setters
 public class Order {
 
 	@Id
@@ -35,10 +35,12 @@ public class Order {
 
 	private Boolean paid = false;
 
-	@OneToMany(fetch = FetchType.LAZY)
+	// We have lineitems on the order now instead
+	@OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL, CascadeType.PERSIST })
 	@JoinColumn(name = "LINEITEM_ID")
 	private List<LineItem> items;
 
+	// Serialisation function
 	public String toJson() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(this);

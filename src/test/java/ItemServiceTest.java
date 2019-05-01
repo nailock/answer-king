@@ -9,6 +9,9 @@ import answer.king.service.ItemService;
 
 public class ItemServiceTest extends GenericServiceTest {
 
+    // Test class for our item service
+
+    // Access to our itemservice
     @Autowired
     private ItemService itemService;
 

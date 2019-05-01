@@ -14,9 +14,13 @@ import answer.king.service.OrderService;
 
 public class OrderServiceTest extends GenericServiceTest {
     
+    // Test class for our order service
+
+    // Access to our itemservice
     @Autowired
     private ItemService itemService;
 
+    // Access to our orderservice
     @Autowired
     private OrderService orderService;
 

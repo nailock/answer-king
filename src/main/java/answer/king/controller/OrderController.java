@@ -35,8 +35,11 @@ public class OrderController {
 		return orderService.save(new Order());
 	}
 
+	// Returning response entities allows us to provide detailed error information
+	// This function now allows for an item quantity to be specified
 	@RequestMapping(value = "/{id}/addItem/{itemId}/quantity/{quantity}", method = RequestMethod.PUT)
 	public ResponseEntity<String> addItem(@PathVariable("id") Long id, @PathVariable("itemId") Long itemId, @PathVariable int quantity) {
+		// Sanitise
 		if (quantity < 0) {
 			return new ResponseEntity<>("{ \"error\": \"Quantity cannot be negative.\" }", HttpStatus.BAD_REQUEST);
 		}
@@ -46,6 +49,7 @@ public class OrderController {
 
 	@RequestMapping(value = "/{id}/pay", method = RequestMethod.PUT)
 	public ResponseEntity<String> pay(@PathVariable("id") Long id, @RequestBody BigDecimal payment) {
+		// Sanitise
 		if (payment.signum() == -1) {
 			return new ResponseEntity<>("{ \"error\": \"Payment cannot be negative.\" }", HttpStatus.BAD_REQUEST);
 		}

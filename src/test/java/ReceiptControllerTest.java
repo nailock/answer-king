@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 
 public class ReceiptControllerTest extends GenericControllerTest {
 
+    // Test class for our receipt controller
+
     private final static String uri = "/receipt";
     private final static String orderUri = "/order";
 
@@ -23,6 +25,7 @@ public class ReceiptControllerTest extends GenericControllerTest {
         
         String content = testReceipt.toJson();
         
+        // POST our new receipt
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(uri)
                          .contentType("application/json")
                          .content(content))
@@ -47,6 +50,7 @@ public class ReceiptControllerTest extends GenericControllerTest {
         
         String content = testReceipt.toJson();
         
+        // POST our new receipt
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(uri)
                          .contentType("application/json")
                          .content(content))
@@ -62,6 +66,7 @@ public class ReceiptControllerTest extends GenericControllerTest {
 
         String fetchUri = uri + "/" + testReceipt.getId();
 
+        // GET our receipt
         MvcResult fetchResult = mockMvc.perform(MockMvcRequestBuilders.get(fetchUri))
          .andReturn();
 

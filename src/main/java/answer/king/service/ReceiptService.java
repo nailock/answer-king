@@ -16,23 +16,29 @@ import answer.king.repo.ReceiptRepository;;
 @Service
 @Transactional
 public class ReceiptService {
+	// New service to manipulate LineItems
 
+	// Access to the receipt repo
 	@Autowired
 	private ReceiptRepository receiptRepository;
 
+	// Access to the order repo
 	@Autowired
 	private OrderRepository orderRepository;
 
+	// Fetch all the receipts
 	public List<Receipt> getAll() {
 		return receiptRepository.findAll();
 	}
 
+	// Find a single receipt
 	public Receipt getReceipt(Long id) {
 		Receipt receipt = receiptRepository.findOne(id);
 		Hibernate.initialize(receipt.getOrder());
 		return receipt;
 	}
 
+	// Find a receipt using it's orderid
 	public Receipt getReceiptByOrder(Long orderid) {
 		Receipt exreceipt = new Receipt();
 		Order order = new Order();
@@ -42,6 +48,7 @@ public class ReceiptService {
 		return receiptRepository.findOne(ex);
 	}
 
+	// Set a receipt's order
 	public void addOrder(Long id, Long orderId) {
 		Receipt receipt = receiptRepository.findOne(id);
 		Order order = orderRepository.findOne(orderId);
@@ -51,6 +58,7 @@ public class ReceiptService {
 		receiptRepository.save(receipt);
 	}
 
+	// Persist a receipt
 	public Receipt save(Receipt receipt) {
 		return receiptRepository.save(receipt);
 	}

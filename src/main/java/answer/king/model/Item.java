@@ -22,7 +22,7 @@ import lombok.Data;
 
 @Entity
 @Table(name = "T_ITEM")
-@Data
+@Data // Lombok can generate our getters and setters
 public class Item {
 
 	@Id
@@ -33,6 +33,7 @@ public class Item {
 
 	private BigDecimal price;
 
+	// Serialisation function
 	public String toJson() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(this);

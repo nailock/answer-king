@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 
 public class ItemControllerTest extends GenericControllerTest {
 
+    // Test class for our item controller
+
     private final static String uri = "/item";
 
     @Test
@@ -20,6 +22,7 @@ public class ItemControllerTest extends GenericControllerTest {
 
         String itemJson = testitem.toJson();
 
+        // POST our new item
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(uri)
                               .contentType("application/json")
                               .content(itemJson)).andReturn();
@@ -43,6 +46,7 @@ public class ItemControllerTest extends GenericControllerTest {
 
         String itemJson = testitem.toJson();
 
+        // POST our new item
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(uri)
                               .contentType("application/json")
                               .content(itemJson)).andReturn();
@@ -63,6 +67,7 @@ public class ItemControllerTest extends GenericControllerTest {
 
         String itemJson = testitem.toJson();
 
+        // POST our new item
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(uri)
                               .contentType("application/json")
                               .content(itemJson)).andReturn();
@@ -84,6 +89,7 @@ public class ItemControllerTest extends GenericControllerTest {
 
         String itemJson = testitem.toJson();
 
+        // POST our new item
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(uri)
                               .contentType("application/json")
                               .content(itemJson)).andReturn();
@@ -101,6 +107,7 @@ public class ItemControllerTest extends GenericControllerTest {
 
         String updatePriceUri = uri + "/" + testitem.getId() + "/updatePrice/" + newPrice;
         
+        // PUT our updated item price
         MvcResult updateResult = mockMvc.perform(MockMvcRequestBuilders.put(updatePriceUri))
                          .andReturn();
 
@@ -110,6 +117,7 @@ public class ItemControllerTest extends GenericControllerTest {
 
         String fetchUri = uri + "/" + returnedItem.getId();
 
+        // GET our item to check the price
         MvcResult fetchResult = mockMvc.perform(MockMvcRequestBuilders.get(fetchUri))
                               .andReturn();
 
@@ -133,6 +141,7 @@ public class ItemControllerTest extends GenericControllerTest {
 
         String itemJson = testitem.toJson();
 
+        // POST our new item
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(uri)
                               .contentType("application/json")
                               .content(itemJson)).andReturn();
@@ -150,6 +159,7 @@ public class ItemControllerTest extends GenericControllerTest {
 
         String updatePriceUri = uri + "/" + testitem.getId() + "/updatePrice/" + newPrice;
         
+        // PUT our updated item price
         MvcResult updateResult = mockMvc.perform(MockMvcRequestBuilders.put(updatePriceUri))
                          .andReturn();
 

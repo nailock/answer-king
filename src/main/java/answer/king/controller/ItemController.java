@@ -21,6 +21,7 @@ import answer.king.service.ItemService;
 @RequestMapping("/item")
 public class ItemController {
 
+	// Regex to sanitise item name input
 	private static final String acceptableNameRegex = "^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$";
 
 	@Autowired
@@ -31,13 +32,16 @@ public class ItemController {
 		return itemService.getAll();
 	}
 
+	// This will let us retrieve a specific Item
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public Item getItem(@PathVariable("id") Long id) {
 		return itemService.getItem(id);
 	}
 
+	// Returning response entities allows us to provide detailed error information
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<String> create(@RequestBody Item item) {
+		// Sanitise input first
 		String valid = checkValidity(item);
 		if (!valid.equals("ok")) {
 			String error = "{ \"error\": \"" + valid + "\" }";
@@ -56,8 +60,10 @@ public class ItemController {
 		return new ResponseEntity<>(itemJson, HttpStatus.OK);
 	}
 
+	// This function lets us update the price of an Item
 	@RequestMapping(value = "/{id}/updatePrice/{newPrice}", method = RequestMethod.PUT)
 	public ResponseEntity<String> updatePrice(@PathVariable("id") Long id, @PathVariable("newPrice") BigDecimal newPrice) {
+		// Sanitise
 		if (newPrice.signum() == -1) {
 			return new ResponseEntity<>("{ \"error\": \"Price cannot be negative.\" }", HttpStatus.BAD_REQUEST);
 		}
