@@ -58,9 +58,9 @@ public class OrderServiceTest extends GenericServiceTest {
 
         orderService.addItem(returnedOrder.getId(), returnedItem.getId());
         
-        Item updatedItem = itemService.getItem(returnedItem.getId());
+        Order fetchedOrder = orderService.getOrder(returnedOrder.getId());
 
-        Assert.assertEquals(returnedOrder.getId(), updatedItem.getOrder().getId());
+        Assert.assertEquals(1, fetchedOrder.getItems().size());
 
     }
 
@@ -91,9 +91,9 @@ public class OrderServiceTest extends GenericServiceTest {
         // Link it to the order
         orderService.addItem(returnedOrder.getId(), returnedItem.getId());
         
-        Item updatedItem = itemService.getItem(returnedItem.getId());
+        Order fetchedOrder = orderService.getOrder(returnedOrder.getId());
 
-        Assert.assertEquals(returnedOrder.getId(), updatedItem.getOrder().getId());
+        Assert.assertEquals(1, fetchedOrder.getItems().size());
 
         BigDecimal paymentAmount = new BigDecimal(15);
         Receipt paymentReceipt = orderService.pay(returnedOrder.getId(), paymentAmount);
@@ -128,9 +128,9 @@ public class OrderServiceTest extends GenericServiceTest {
         // Link it to the order
         orderService.addItem(returnedOrder.getId(), returnedItem.getId());
         
-        Item updatedItem = itemService.getItem(returnedItem.getId());
+        Order fetchedOrder = orderService.getOrder(returnedOrder.getId());
 
-        Assert.assertEquals(returnedOrder.getId(), updatedItem.getOrder().getId());
+        Assert.assertEquals(1, fetchedOrder.getItems().size());
 
         BigDecimal paymentAmount = new BigDecimal(5);
         Receipt paymentreceipt = orderService.pay(returnedOrder.getId(), paymentAmount);

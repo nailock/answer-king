@@ -16,6 +16,8 @@ import javax.persistence.Table;
 import lombok.Data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -34,18 +36,20 @@ public class Receipt {
 	@JoinColumn(name = "ORDER_ID")
 	private Order order;
 
-	//private BigDecimal change;
-
 	private String text;
 
-	@JsonIgnore
+	@JsonProperty(access = Access.READ_ONLY)
+	private BigDecimal change;
+
 	public BigDecimal getChange() {
-		if (payment.compareTo(BigDecimal.ZERO) == 0) {
+		if (order == null ||
+			payment == null ||
+			payment.compareTo(BigDecimal.ZERO) == 0) {
 			return BigDecimal.ZERO;
 		}
 		BigDecimal totalOrderPrice = order.getItems()
 			.stream()
-			.map(Item::getPrice)
+			.map(LineItem::getCurrentPrice)
 			.reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		return payment.subtract(totalOrderPrice);

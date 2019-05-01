@@ -24,7 +24,6 @@ public class ItemService {
 
 	public Item getItem(Long id) {
 		Item item = itemRepository.findOne(id);
-		Hibernate.initialize(item.getOrder());
 		return item;
 	}
 

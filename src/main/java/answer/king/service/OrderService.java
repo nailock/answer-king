@@ -2,6 +2,7 @@ package answer.king.service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import answer.king.model.Item;
+import answer.king.model.LineItem;
 import answer.king.model.Order;
 import answer.king.model.Receipt;
 import answer.king.repo.ItemRepository;
+import answer.king.repo.LineItemRepository;
 import answer.king.repo.OrderRepository;
 import answer.king.repo.ReceiptRepository;
 
@@ -27,6 +30,9 @@ public class OrderService {
 
 	@Autowired
 	private ReceiptRepository receiptRepository;
+
+	@Autowired
+	private LineItemRepository lineItemRepository;
 
 	public List<Order> getAll() {
 		return orderRepository.findAll();
@@ -46,8 +52,18 @@ public class OrderService {
 		Order order = orderRepository.findOne(id);
 		Item item = itemRepository.findOne(itemId);
 
-		item.setOrder(order);
-		order.getItems().add(item);
+		LineItem lineItem = new LineItem();
+		lineItem.setItemId(item.getId());
+		lineItem.setCurrentPrice(item.getPrice());
+		lineItem.setQuantity(1);
+		lineItemRepository.save(lineItem);
+
+		if (order.getItems() == null) {
+			ArrayList<LineItem> items = new ArrayList<>();
+			order.setItems(items);
+		}
+
+		order.getItems().add(lineItem);
 
 		orderRepository.save(order);
 	}
@@ -57,7 +73,7 @@ public class OrderService {
 
 		BigDecimal totalOrderPrice = order.getItems()
 			.stream()
-			.map(Item::getPrice)
+			.map(LineItem::getCurrentPrice)
 			.reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		Receipt receipt = new Receipt();
