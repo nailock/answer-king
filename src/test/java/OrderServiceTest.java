@@ -56,11 +56,50 @@ public class OrderServiceTest extends GenericServiceTest {
         Assert.assertEquals(testorder.getId(), returnedOrder.getId());
         Assert.assertEquals(testorder.getPaid(), returnedOrder.getPaid());
 
-        orderService.addItem(returnedOrder.getId(), returnedItem.getId());
+        orderService.addItem(returnedOrder.getId(), returnedItem.getId(), 1);
         
         Order fetchedOrder = orderService.getOrder(returnedOrder.getId());
 
         Assert.assertEquals(1, fetchedOrder.getItems().size());
+
+    }
+
+    @Test
+    public void testAddItem_duplicateItem() {
+        // Item first
+        Item testitem = new Item();
+        testitem.setId(1L);
+        testitem.setName("Test Item");
+        BigDecimal itemAmount = new BigDecimal(10);
+        testitem.setPrice(itemAmount);
+
+        Item returnedItem = itemService.save(testitem);
+
+        Assert.assertEquals(testitem.getId(), returnedItem.getId());
+        Assert.assertEquals(testitem.getName(), returnedItem.getName());
+        Assert.assertEquals(testitem.getPrice(), returnedItem.getPrice());
+
+        Order testorder = new Order();
+        testorder.setId(1L);
+        testorder.setPaid(false);
+
+        Order returnedOrder = orderService.save(testorder);
+
+        Assert.assertEquals(testorder.getId(), returnedOrder.getId());
+        Assert.assertEquals(testorder.getPaid(), returnedOrder.getPaid());
+
+        orderService.addItem(returnedOrder.getId(), returnedItem.getId(), 1);
+        
+        Order fetchedOrder = orderService.getOrder(returnedOrder.getId());
+
+        Assert.assertEquals(1, fetchedOrder.getItems().size());
+
+        orderService.addItem(returnedOrder.getId(), returnedItem.getId(), 2);
+
+        fetchedOrder = orderService.getOrder(returnedOrder.getId());
+
+        Assert.assertEquals(1, fetchedOrder.getItems().size());
+        Assert.assertEquals(3, fetchedOrder.getItems().get(0).getQuantity());
 
     }
 
@@ -89,7 +128,7 @@ public class OrderServiceTest extends GenericServiceTest {
         Assert.assertEquals(testorder.getPaid(), returnedOrder.getPaid());
 
         // Link it to the order
-        orderService.addItem(returnedOrder.getId(), returnedItem.getId());
+        orderService.addItem(returnedOrder.getId(), returnedItem.getId(), 1);
         
         Order fetchedOrder = orderService.getOrder(returnedOrder.getId());
 
@@ -126,7 +165,7 @@ public class OrderServiceTest extends GenericServiceTest {
         Assert.assertEquals(testorder.getPaid(), returnedOrder.getPaid());
 
         // Link it to the order
-        orderService.addItem(returnedOrder.getId(), returnedItem.getId());
+        orderService.addItem(returnedOrder.getId(), returnedItem.getId(), 1);
         
         Order fetchedOrder = orderService.getOrder(returnedOrder.getId());
 

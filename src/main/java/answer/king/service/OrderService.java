@@ -2,6 +2,7 @@ package answer.king.service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.ArrayList;
 
 import org.hibernate.Hibernate;
@@ -48,20 +49,34 @@ public class OrderService {
 		return orderRepository.save(order);
 	}
 
-	public void addItem(Long id, Long itemId) {
+	public void addItem(Long id, Long itemId, int quantity) {
 		Order order = orderRepository.findOne(id);
 		Item item = itemRepository.findOne(itemId);
-
-		LineItem lineItem = new LineItem();
-		lineItem.setItemId(item.getId());
-		lineItem.setCurrentPrice(item.getPrice());
-		lineItem.setQuantity(1);
-		lineItemRepository.save(lineItem);
 
 		if (order.getItems() == null) {
 			ArrayList<LineItem> items = new ArrayList<>();
 			order.setItems(items);
+		} else {
+			Optional<LineItem> findItem = order.getItems()
+								.stream()
+								.filter(e -> e.getItemId().equals(itemId))
+								.findFirst();
+			if (findItem.isPresent()) {
+				LineItem foundItem = findItem.get();
+				foundItem.setQuantity(foundItem.getQuantity() + quantity);
+				lineItemRepository.save(foundItem);
+				return;
+			}
+			
 		}
+
+		LineItem lineItem = new LineItem();
+		lineItem.setItemId(item.getId());
+		lineItem.setCurrentPrice(item.getPrice());
+		lineItem.setQuantity(quantity);
+		lineItemRepository.save(lineItem);
+
+		
 
 		order.getItems().add(lineItem);
 
@@ -71,13 +86,19 @@ public class OrderService {
 	public Receipt pay(Long id, BigDecimal payment) {
 		Order order = orderRepository.findOne(id);
 
-		BigDecimal totalOrderPrice = order.getItems()
-			.stream()
-			.map(LineItem::getCurrentPrice)
-			.reduce(BigDecimal.ZERO, BigDecimal::add);
-
 		Receipt receipt = new Receipt();
 		receipt.setOrder(order);
+
+		if (order.getPaid()) {
+			receipt.setPayment(BigDecimal.ZERO);
+			receipt.setText("Order already paid");
+			return receipt;
+		}
+
+		BigDecimal totalOrderPrice = order.getItems()
+			.stream()
+			.map(LineItem::getTotalPrice)
+			.reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		if (payment.compareTo(totalOrderPrice) == -1) {
 			receipt.setPayment(BigDecimal.ZERO);

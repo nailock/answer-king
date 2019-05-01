@@ -32,6 +32,11 @@ public class LineItem {
 
     private Long itemId;
 
+    @JsonIgnore
+    public BigDecimal getTotalPrice() {
+        return currentPrice.multiply(new BigDecimal(quantity));
+    }
+
 	public String toJson() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(this);

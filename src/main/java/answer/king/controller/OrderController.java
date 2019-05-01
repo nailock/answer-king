@@ -3,7 +3,11 @@ package answer.king.controller;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,13 +35,31 @@ public class OrderController {
 		return orderService.save(new Order());
 	}
 
-	@RequestMapping(value = "/{id}/addItem/{itemId}", method = RequestMethod.PUT)
-	public void addItem(@PathVariable("id") Long id, @PathVariable("itemId") Long itemId) {
-		orderService.addItem(id, itemId);
+	@RequestMapping(value = "/{id}/addItem/{itemId}/quantity/{quantity}", method = RequestMethod.PUT)
+	public ResponseEntity<String> addItem(@PathVariable("id") Long id, @PathVariable("itemId") Long itemId, @PathVariable int quantity) {
+		if (quantity < 0) {
+			return new ResponseEntity<>("{ \"error\": \"Quantity cannot be negative.\" }", HttpStatus.BAD_REQUEST);
+		}
+		orderService.addItem(id, itemId, quantity);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{id}/pay", method = RequestMethod.PUT)
-	public Receipt pay(@PathVariable("id") Long id, @RequestBody BigDecimal payment) {
-		return orderService.pay(id, payment);
+	public ResponseEntity<String> pay(@PathVariable("id") Long id, @RequestBody BigDecimal payment) {
+		if (payment.signum() == -1) {
+			return new ResponseEntity<>("{ \"error\": \"Payment cannot be negative.\" }", HttpStatus.BAD_REQUEST);
+		}
+		
+		Receipt receipt = orderService.pay(id, payment);
+		String receiptJson = "";
+		try {
+			receiptJson = receipt.toJson();
+		} catch (JsonProcessingException ex) {
+			String error = "{ \"error\": \"Exception serialising receipt to JSON.\" }";
+			return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity<>(receiptJson, HttpStatus.OK);
 	}
+
 }

@@ -59,13 +59,61 @@ public class OrderControllerTest extends GenericControllerTest {
         Assert.assertEquals(200, orderstatus);
 
         // Now we can add the item
-        String adduri = orderuri + "/" + returnedOrder.getId() + "/addItem/" + returnedItem.getId();
+        String adduri = orderuri + "/" + returnedOrder.getId() + "/addItem/" + returnedItem.getId()
+                        + "/quantity/1";
         MvcResult addresult = mockMvc.perform(MockMvcRequestBuilders.put(adduri))
                             .andReturn();
 
         int addstatus = addresult.getResponse().getStatus();
 
         Assert.assertEquals(200, addstatus);
+    }
+
+    @Test
+    public void testOrderAddItem_invalidQuantity() throws Exception {
+        // Prerequisite - we have an item
+        Item testitem = new Item();
+        testitem.setId(1L);
+        testitem.setName("Test Item");
+        BigDecimal itemAmount = new BigDecimal(10);
+        testitem.setPrice(itemAmount);
+
+        String itemJson = testitem.toJson();
+
+        MvcResult itemresult = mockMvc.perform(MockMvcRequestBuilders.post(itemuri)
+                              .contentType("application/json")
+                              .content(itemJson)).andReturn();
+
+        int itemstatus = itemresult.getResponse().getStatus();
+        String itemResponseContent = itemresult.getResponse().getContentAsString();
+        Item returnedItem = mapFromJson(itemResponseContent, Item.class);
+
+        Assert.assertEquals(200, itemstatus);
+        Assert.assertEquals(testitem.getId(), returnedItem.getId());
+        Assert.assertEquals(testitem.getName(), returnedItem.getName());
+        Assert.assertEquals(testitem.getPrice(), returnedItem.getPrice());
+
+        // Prerequisite - we have an order
+        MvcResult orderresult = mockMvc.perform(MockMvcRequestBuilders.post(orderuri))
+                         .andReturn();
+
+        int orderstatus = orderresult.getResponse().getStatus();
+        String orderResponseContent = orderresult.getResponse().getContentAsString();
+        Order returnedOrder = mapFromJson(orderResponseContent, Order.class);
+
+        Assert.assertEquals(200, orderstatus);
+
+        // Now we can add the item
+        String adduri = orderuri + "/" + returnedOrder.getId() + "/addItem/" + returnedItem.getId()
+                        + "/quantity/-1";
+        MvcResult addresult = mockMvc.perform(MockMvcRequestBuilders.put(adduri))
+                            .andReturn();
+
+        int addstatus = addresult.getResponse().getStatus();
+        String addResponseContent = addresult.getResponse().getContentAsString();
+
+        Assert.assertEquals(400, addstatus);
+        Assert.assertEquals("{ \"error\": \"Quantity cannot be negative.\" }", addResponseContent);
     }
 
     @Test
@@ -103,7 +151,8 @@ public class OrderControllerTest extends GenericControllerTest {
         Assert.assertEquals(200, orderstatus);
 
         // Prerequisite - the item's attached to the order
-        String adduri = orderuri + "/" + returnedOrder.getId() + "/addItem/" + returnedItem.getId();
+        String adduri = orderuri + "/" + returnedOrder.getId() + "/addItem/" + returnedItem.getId()
+                        + "/quantity/1";
         MvcResult addresult = mockMvc.perform(MockMvcRequestBuilders.put(adduri))
                             .andReturn();
 
@@ -170,7 +219,8 @@ public class OrderControllerTest extends GenericControllerTest {
         Assert.assertEquals(200, orderstatus);
 
         // Prerequisite - the item's attached to the order
-        String adduri = orderuri + "/" + returnedOrder.getId() + "/addItem/" + returnedItem.getId();
+        String adduri = orderuri + "/" + returnedOrder.getId() + "/addItem/" + returnedItem.getId()
+                        + "/quantity/1";
         MvcResult addresult = mockMvc.perform(MockMvcRequestBuilders.put(adduri))
                             .andReturn();
 
@@ -200,5 +250,65 @@ public class OrderControllerTest extends GenericControllerTest {
         Assert.assertEquals("Insufficient funds", paymentreceipt.getText());
         Assert.assertEquals(BigDecimal.ZERO, paymentreceipt.getChange());
         Assert.assertEquals(BigDecimal.ZERO, paymentreceipt.getPayment());
+    }
+
+    @Test
+    public void testOrderPay_negativePayment() throws Exception {
+        // Prerequisite - we have an item
+        Item testitem = new Item();
+        testitem.setId(1L);
+        testitem.setName("Test Item");
+        BigDecimal itemAmount = new BigDecimal(10);
+        testitem.setPrice(itemAmount);
+
+        String itemJson = testitem.toJson();
+
+        MvcResult itemresult = mockMvc.perform(MockMvcRequestBuilders.post(itemuri)
+                              .contentType("application/json")
+                              .content(itemJson)).andReturn();
+
+        int itemstatus = itemresult.getResponse().getStatus();
+        String itemResponseContent = itemresult.getResponse().getContentAsString();
+        Item returnedItem = mapFromJson(itemResponseContent, Item.class);
+
+        Assert.assertEquals(200, itemstatus);
+        Assert.assertEquals(testitem.getId(), returnedItem.getId());
+        Assert.assertEquals(testitem.getName(), returnedItem.getName());
+        Assert.assertEquals(testitem.getPrice(), returnedItem.getPrice());
+
+        // Prerequisite - we have an order
+        MvcResult orderresult = mockMvc.perform(MockMvcRequestBuilders.post(orderuri))
+                         .andReturn();
+
+        int orderstatus = orderresult.getResponse().getStatus();
+        String orderResponseContent = orderresult.getResponse().getContentAsString();
+        Order returnedOrder = mapFromJson(orderResponseContent, Order.class);
+
+        Assert.assertEquals(200, orderstatus);
+
+        // Prerequisite - the item's attached to the order
+        String adduri = orderuri + "/" + returnedOrder.getId() + "/addItem/" + returnedItem.getId()
+                        + "/quantity/1";
+        MvcResult addresult = mockMvc.perform(MockMvcRequestBuilders.put(adduri))
+                            .andReturn();
+
+        int addstatus = addresult.getResponse().getStatus();
+
+        Assert.assertEquals(200, addstatus);
+
+        // Now let's pay
+        String payuri = orderuri + "/" + returnedOrder.getId() + "/pay";
+
+        String paymentAmount = "-1";
+        MvcResult paymentresult = mockMvc.perform(MockMvcRequestBuilders.put(payuri)
+                                .contentType("application/json")
+                                .content(paymentAmount))
+                                .andReturn();
+
+        int paymentstatus = paymentresult.getResponse().getStatus();
+        String paymentResponseContent = paymentresult.getResponse().getContentAsString();
+        
+        Assert.assertEquals(400, paymentstatus);
+        Assert.assertEquals("{ \"error\": \"Payment cannot be negative.\" }", paymentResponseContent);
     }
 }

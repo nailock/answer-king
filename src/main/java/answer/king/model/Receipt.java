@@ -49,7 +49,7 @@ public class Receipt {
 		}
 		BigDecimal totalOrderPrice = order.getItems()
 			.stream()
-			.map(LineItem::getCurrentPrice)
+			.map(LineItem::getTotalPrice)
 			.reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		return payment.subtract(totalOrderPrice);
